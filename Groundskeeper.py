@@ -1,20 +1,17 @@
+import os
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import ResourceManagementClient
+from dotenv import load_dotenv
 
-# Bit janky, likely to change
-import configparser
+# Load environment variables from the .env file (where the subscription id is located)
+load_dotenv()
 
 def connect_to_azure():
-    # Read your configuration from config.ini
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    subscription_id = config['Azure']['subscription_id']
-
-    # Obtain Azure credentials using the default credential provider
+    # Use DefaultAzureCredential which automatically selects appropriate credentials in order to connect to Azure
     credentials = DefaultAzureCredential()
 
-    # Create the Azure Resource Management client
-    resource_client = ResourceManagementClient(credentials, subscription_id)
+    # Create the Azure Resource Management client and retrieve the subscription id
+    resource_client = ResourceManagementClient(credentials, subscription_id=os.getenv("AZURE_SUBSCRIPTION_ID"))
 
     return resource_client
 
