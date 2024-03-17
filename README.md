@@ -15,3 +15,13 @@ footprint in the cloud.<br>
 
 As this is my project for university, I will be able to post my accompanying documents
 and reports on my findings after I graduate.
+
+## How to Set Up Groundskeeper
+Please ensure the Azure CLI is installed on the machine. <br>
+
+In order to set up Groundskeeper, please pull the repository. 
+From here, you need to enter your Azure Subscription ID in the ".env.template" file. 
+Please rename this file to just ".env".<br>
+
+## How Groundskeeper Works
+Groundskeeper Willie is designed to check for an ExpirationDate tag. If it finds it and the date matches the date of the job, it will delete the resource.
