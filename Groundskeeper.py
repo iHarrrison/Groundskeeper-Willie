@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import ResourceManagementClient
 from dotenv import load_dotenv
@@ -7,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def connect_to_azure():
-    # Use DefaultAzureCredential which automatically selects appropriate credentials in order to connect to Azure
+    # Use DefaultAzureCredential to authenticate
     credentials = DefaultAzureCredential()
 
     # Create the Azure Resource Management client and retrieve the subscription id
@@ -15,14 +16,30 @@ def connect_to_azure():
 
     return resource_client
 
-def list_resources(resource_client):
-    # List resources in the Azure subscription
-    resources = resource_client.resources.list()
+def check_expiration_tags(resource_client):
+    # Define the tag key indicating expiration
+    expiration_tag_key = 'ExpirationDate'
+    # Define a threshold date (e.g., today) to identify expired resources
+    threshold_date = datetime.utcnow().date()  # Get the current date without the time
 
-    # Print resource information
+    # List resources and check expiration tags
+    resources = resource_client.resources.list()
     for resource in resources:
-        print(f"Resource ID: {resource.id}, Type: {resource.type}")
+        # Check if resource has tags
+        if resource.tags:
+            if expiration_tag_key in resource.tags:
+                expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%d').date()
+                if expiration_date <= threshold_date:
+                    # Resource has expired, take appropriate action (e.g., delete)
+                    delete_resource(resource.id)
+        #else:
+            # Resource has no tags
+            #print(f"Resource {resource.id} has no tags.")
+
+def delete_resource(resource_id):
+    # Print the resource ID instead of deleting it
+    print(f"Resource {resource_id} would be deleted.")
 
 if __name__ == "__main__":
     azure_client = connect_to_azure()
-    list_resources(azure_client)
+    check_expiration_tags(azure_client)
