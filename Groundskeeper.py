@@ -16,30 +16,29 @@ def connect_to_azure():
 
     return resource_client
 
-def check_expiration_tags(resource_client):
-    # Define the tag key indicating expiration
+def check_expiration_tags(resource_client, dry_run = True):
     expiration_tag_key = 'ExpirationDate'
-    # Define a threshold date (e.g., today) to identify expired resources
-    threshold_date = datetime.utcnow().date()  # Get the current date without the time
+    threshold_date = datetime.utcnow().date()
 
     # List resources and check expiration tags
     resources = resource_client.resources.list()
     for resource in resources:
-        # Check if resource has tags
         if resource.tags:
             if expiration_tag_key in resource.tags:
                 expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%d').date()
                 if expiration_date <= threshold_date:
-                    # Resource has expired, take appropriate action (e.g., delete)
-                    delete_resource(resource.id)
-        #else:
-            # Resource has no tags
-            #print(f"Resource {resource.id} has no tags.")
+                    # Extract resource name from the resource ID
+                    resource_name = resource.id.split('/')[-1]
+                    # Print resource name
+                    if dry_run:
+                        print(f"Resource {resource_name} would be deleted.")
+                    else:
+                        delete_resource(resource.id)
 
 def delete_resource(resource_id):
-    # Print the resource ID instead of deleting it
-    print(f"Resource {resource_id} would be deleted.")
+    pass
 
 if __name__ == "__main__":
     azure_client = connect_to_azure()
-    check_expiration_tags(azure_client)
+    # Set dry_run to False to perform actual deletion
+    check_expiration_tags(azure_client, dry_run=True)
