@@ -16,6 +16,7 @@ def connect_to_azure():
 
     return resource_client
 
+
 def check_expiration_tags(resource_client):
     expiration_tag_key = 'ExpirationDate'
     threshold_date = datetime.utcnow().date()
@@ -30,6 +31,11 @@ def check_expiration_tags(resource_client):
     for resources_page in resources_pages:
         # Iterate over resources on the current page
         for resource in resources_page:
+            # Check if the resource has any locks
+            if resource.properties and resource.properties.locks:
+                # Skip this resource if it has locks
+                continue
+
             if resource.tags and expiration_tag_key in resource.tags:
                 expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%d').date()
                 if expiration_date <= threshold_date:
@@ -51,9 +57,10 @@ def delete_resource(resource_client, resource_id, resource_name):
         print(f"Resource {resource_name} would be deleted.")
     else:
         try:
-            # Delete the resource
+            # Delete the resource, api version is stable and required by azure delete_by_id function.
             resource_client.resources.begin_delete_by_id(resource_id, api_version='2023-05-01')
             print(f"Resource {resource_name} has been deleted.")
+        # any issues with deletion are returned with the exception message
         except Exception as e:
             print(f"Failed to delete resource {resource_name}: {e}")
 
