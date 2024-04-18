@@ -25,3 +25,6 @@ Please rename this file to just ".env".<br>
 
 ## How Groundskeeper Works
 Groundskeeper Willie is designed to check for an ExpirationDate tag. If it finds it and the date matches the date of the job, it will delete the resource.
+
+## Groundskeeper Log
+A log will be created upon Groundskeeper running, and it will be stored in the root directory of the project. Here, you can see a full audit log of what it has done upon running.
