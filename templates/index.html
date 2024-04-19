@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundskeeper Willie</title>
+</head>
+<body>
+    <h1>Groundskeeper Willie Dashboard</h1>
+    <p>Please see below for resources that have been flagged with low usage and may be eligible for deletion.</p>
+    <h2>Resource Names:</h2>
+    <ul>
+        {% for name in resource_names %}
+            <li>{{ name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
