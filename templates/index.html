@@ -8,11 +8,31 @@
 <body>
     <h1>Groundskeeper Willie Dashboard</h1>
     <p>Please see below for resources that have been flagged with low usage and may be eligible for deletion.</p>
-    <h2>Resource Names:</h2>
-    <ul>
-        {% for name in resource_names %}
-            <li>{{ name }}</li>
-        {% endfor %}
-    </ul>
+
+    <h2>Resources Scheduled for Expiration:</h2>
+    <form id="scheduled-for-expiration-form" action="/update-tag" method="POST">
+        <ul>
+            {% for resource in resources_scheduled_for_expiration %}
+                <li>
+                    <input type="checkbox" name="resource" value="{{ resource.name }}">
+                    <a href="{{ resource.url }}" target="_blank">{{ resource.name }}</a> (Expiration Date: {{ resource.expiration_date }})
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit" name="action" value="remove">Remove Expiration Date</button>
+    </form>
+
+    <h2>Resources Not Scheduled for Expiration:</h2>
+    <form id="not-scheduled-for-expiration-form" action="/update-tag" method="POST">
+        <ul>
+            {% for resource in resources_not_scheduled_for_expiration %}
+                <li>
+                    <input type="checkbox" name="resource" value="{{ resource.name }}">
+                    <a href="{{ resource.url }}" target="_blank">{{ resource.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit" name="action" value="tag">Tag for Expiration</button>
+    </form>
 </body>
 </html>
