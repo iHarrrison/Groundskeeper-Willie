@@ -4,34 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Groundskeeper Willie</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Groundskeeper Willie Dashboard</h1>
-    <p>Please see below for resources that have been flagged with low usage and may be eligible for deletion.</p>
-
-    <h2>Resources Scheduled for Expiration:</h2>
+    <p> A Dashboard to see what resources are coming up for deletion and which are eligible for tagging.</p>
+    <h2>Resources Scheduled for Expiration in the next 7 days:</h2>
     <form id="scheduled-for-expiration-form" action="/update-tag" method="POST">
-        <ul>
-            {% for resource in resources_scheduled_for_expiration %}
-                <li>
-                    <input type="checkbox" name="resource" value="{{ resource.name }}">
-                    <a href="{{ resource.url }}" target="_blank">{{ resource.name }}</a> (Expiration Date: {{ resource.expiration_date }})
-                </li>
-            {% endfor %}
-        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Resource Name</th>
+                    <th>Expiration Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in resources_scheduled_for_expiration %}
+                    <tr>
+                        <td><input type="checkbox" name="resource" value="{{ resource.name }}"></td>
+                        <td><a href="{{ resource.url }}" target="_blank">{{ resource.name }}</a></td>
+                        <td>{{ resource.expiration_date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <button type="submit" name="action" value="remove">Remove Expiration Date</button>
     </form>
 
     <h2>Resources Not Scheduled for Expiration:</h2>
     <form id="not-scheduled-for-expiration-form" action="/update-tag" method="POST">
-        <ul>
-            {% for resource in resources_not_scheduled_for_expiration %}
-                <li>
-                    <input type="checkbox" name="resource" value="{{ resource.name }}">
-                    <a href="{{ resource.url }}" target="_blank">{{ resource.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Resource Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in resources_not_scheduled_for_expiration %}
+                    <tr>
+                        <td><input type="checkbox" name="resource" value="{{ resource.name }}"></td>
+                        <td><a href="{{ resource.url }}" target="_blank">{{ resource.name }}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         <button type="submit" name="action" value="tag">Tag for Expiration</button>
     </form>
 </body>

@@ -46,7 +46,7 @@ def check_expiration_tags(resource_client):
                 continue
 
             if resource.tags and expiration_tag_key in resource.tags:
-                expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%d').date()
+                expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%dT%H:%M:%SZ').date()
                 if expiration_date <= threshold_date:
                     resource_name = resource.id.split('/')[-1]
                     # Check if it's dry-run mode and add resource to the list
@@ -64,18 +64,14 @@ def check_expiration_tags(resource_client):
             print(f"- {resource_name}")
 
 def delete_resource(resource_client, resource_id, resource_name):
-    if dry_run:
-        logging.info(f"Resource {resource_name} would be deleted.")
-        print(f"Resource {resource_name} would be deleted.")
-    else:
-        try:
-            # Delete the resource
-            resource_client.resources.begin_delete_by_id(resource_id, api_version='2023-05-01')
-            logging.info(f"Resource {resource_name} has been deleted.")
-            print(f"Resource {resource_name} has been deleted.")
-        except Exception as e:
-            logging.error(f"Failed to delete resource {resource_name}: {e}")
-            print(f"Failed to delete resource {resource_name}: {e}")
+    try:
+        # Delete the resource
+        resource_client.resources.begin_delete_by_id(resource_id, api_version='2023-05-01')
+        logging.info(f"Resource {resource_name} has been deleted.")
+        print(f"Resource {resource_name} has been deleted.")
+    except Exception as e:
+        logging.error(f"Failed to delete resource {resource_name}: {e}")
+        print(f"Failed to delete resource {resource_name}: {e}")
 
 if __name__ == "__main__":
     # |||IMPORTANT|||

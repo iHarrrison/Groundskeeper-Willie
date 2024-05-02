@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    color: #003366;
+}
+h1, h2 {
+    color: #006699;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+th, td {
+    border: 1px solid #0099cc;
+    padding: 8px;
+    text-align: left;
+}
+a {
+    color: #004488;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+button {
+    background-color: #006699;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #004477;
+}
