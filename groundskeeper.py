@@ -46,7 +46,18 @@ def check_expiration_tags(resource_client):
                 continue
 
             if resource.tags and expiration_tag_key in resource.tags:
-                expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%dT%H:%M:%SZ').date()
+                try:
+                    # Try parsing with format including time and timezone specifier
+                    expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%dT%H:%M:%SZ').date()
+                except ValueError:
+                    try:
+                        # If parsing fails, try parsing without time and timezone specifier
+                        expiration_date = datetime.strptime(resource.tags[expiration_tag_key], '%Y-%m-%d').date()
+                    except ValueError:
+                        # Handle any cases where timestamp cannot be parsed with either format
+                        logging.error(f"Failed to parse expiration date for resource {resource.id}. Invalid timestamp format.")
+                        continue
+
                 if expiration_date <= threshold_date:
                     resource_name = resource.id.split('/')[-1]
                     # Check if it's dry-run mode and add resource to the list
@@ -76,7 +87,7 @@ def delete_resource(resource_client, resource_id, resource_name):
 if __name__ == "__main__":
     # |||IMPORTANT|||
     # Please set the dry_run to False in order to perform actual deletion
-    dry_run = True
+    dry_run = False
     logging.info("Starting Groundskeeper...")
     azure_client = connect_to_azure()
     check_expiration_tags(azure_client)
